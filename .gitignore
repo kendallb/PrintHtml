@@ -1,0 +1,6 @@
+Makefile*
+object_script.*
+ui_*.h
+debug/
+release/
+*.pro.user
