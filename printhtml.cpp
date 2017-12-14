@@ -29,7 +29,7 @@
 /*
  * Constructor for the HTML printing class
  */
-PrintHtml::PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin, double rightMargin, double bottomMargin)
+PrintHtml::PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin, double rightMargin, double bottomMargin, QString paper)
 {
     // Get the instance of the main application
     app = QCoreApplication::instance();
@@ -40,7 +40,11 @@ PrintHtml::PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, d
         printer->setPrinterName(selectedPrinter);
     }
     printer->setOrientation(QPrinter::Portrait);
-    printer->setPaperSize(QPrinter::Letter);
+    if (paper == "A4") {
+        printer->setPaperSize(QPrinter::A4);
+    } else {
+        printer->setPaperSize(QPrinter::Letter);
+    }
     printer->setPageMargins(leftMargin, topMargin, rightMargin, bottomMargin, QPrinter::Inch);
 
     // Create our web page

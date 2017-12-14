@@ -46,17 +46,19 @@ int main(
     double topMargin = 0.5;
     double rightMargin = 0.5;
     double bottomMargin = 0.5;
+    QString paper = "letter";
     QStringList urls;
     bool testMode = false;
     if (argc < 2) {
-        QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] <url> [url2]\n\n";
-        usage += "-test         - Don't print, just show what would have printed.\n";
-        usage += "-p printer    - Printer to print to. Use 'Default' for default printer.\n";
-        usage += "-l left       - Optional left margin for page.\n";
-        usage += "-t top        - Optional top margin for page.\n";
-        usage += "-r right      - Optional right margin for page.\n";
-        usage += "-b bottom     - Optional bottom margin for page.\n";
-        usage += "url           - Defines the list of URLs to print, one after the other.\n";
+        QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] <url> [url2]\n\n";
+        usage += "-test          - Don't print, just show what would have printed.\n";
+        usage += "-p printer     - Printer to print to. Use 'Default' for default printer.\n";
+        usage += "-l left        - Optional left margin for page.\n";
+        usage += "-t top         - Optional top margin for page.\n";
+        usage += "-r right       - Optional right margin for page.\n";
+        usage += "-b bottom      - Optional bottom margin for page.\n";
+        usage += "-a [A4|Letter] - Optional paper type.\n";
+        usage += "url            - Defines the list of URLs to print, one after the other.\n";
         QMessageBox msgBox;
         msgBox.setWindowTitle("PrintHtml Usage");
         msgBox.setText(usage);
@@ -77,6 +79,8 @@ int main(
             rightMargin = atof(argv[++i]);
         } else if (arg == "-b") {
             bottomMargin = atof(argv[++i]);
+        } else if (arg == "-a") {
+            paper = argv[++i];
         } else {
             urls << arg;
         }
@@ -112,7 +116,7 @@ int main(
     app.setLibraryPaths(paths);
 
     // Create the HTML printer class
-    PrintHtml printHtml(testMode, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin);
+    PrintHtml printHtml(testMode, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper);
 
     // Connect up the signals
     QObject::connect(&printHtml, SIGNAL(finished()), &app, SLOT(quit()));
