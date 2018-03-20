@@ -27,6 +27,7 @@ Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] 
 -t top        - Optional top margin for page.
 -r right      - Optional right margin for page.
 -b bottom     - Optional bottom margin for page.
+-json         - Optional Stdout array of success and error without MsgBox.
 url           - Defines the list of URLs to print, one after the other.
 ~~~~
 
@@ -36,6 +37,10 @@ large batches of URL's to print, like we do simply pass them all on the command 
 print our pick sheets using this tool by passing in batches of 20 URL's at a time and it works very fast
 without anything showing on the screen.
 
+# JSON option
+STDOUT will return JSON Object with 2 property.
+error is array of url that failed to load.
+success is array of successfully load.
 # Build environment
 
 To build this you need to use a version of Qt that includes the QtWebKit control. This control was deprecated
