@@ -48,20 +48,22 @@ int main(
     double topMargin = 0.5;
     double rightMargin = 0.5;
     double bottomMargin = 0.5;
+    QString paper = "";
     QStringList urls;
     QString dataPath = QApplication::applicationDirPath();
     bool testMode = false;
     bool json = false;
     if (argc < 2) {
         QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] <url> [url2]\n\n";
-        usage += "-test         - Don't print, just show what would have printed.\n";
-        usage += "-p printer    - Printer to print to. Use 'Default' for default printer.\n";
-        usage += "-l left       - Optional left margin for page.\n";
-        usage += "-t top        - Optional top margin for page.\n";
-        usage += "-r right      - Optional right margin for page.\n";
-        usage += "-b bottom     - Optional bottom margin for page.\n";
-        usage += "url           - Defines the list of URLs to print, one after the other.\n";
-        usage += "-json         - Optional Stdout array of success and error without MsgBox. \n";
+        usage += "-test         \t- Don't print, just show what would have printed.\n";
+        usage += "-p printer    \t- Printer to print to. Use 'Default' for default printer.\n";
+        usage += "-l left       \t- Optional left margin for page.\n";
+        usage += "-t top        \t- Optional top margin for page.\n";
+        usage += "-r right      \t- Optional right margin for page.\n";
+        usage += "-b bottom     \t- Optional bottom margin for page.\n";
+        usage += "url           \t- Defines the list of URLs to print, one after the other.\n";
+        usage += "-a [A4|Letter]\t- Optional paper type blank for not set paper.\n ";
+        usage += "-json         \t- Optional Stdout array of success and error without MsgBox. \n";
         QMessageBox msgBox;
         msgBox.setWindowTitle("PrintHtml Usage");
         msgBox.setText(usage);
@@ -82,7 +84,9 @@ int main(
             rightMargin = atof(argv[++i]);
         } else if (arg == "-b") {
             bottomMargin = atof(argv[++i]);
-        }else if(arg == "-json"){
+        } else if (arg == "-a") {
+            paper = argv[++i];
+        } else if(arg == "-json"){
             json = true;
         } else {
             urls << arg;
@@ -119,7 +123,7 @@ int main(
     app.setLibraryPaths(paths);
 
     // Create the HTML printer class
-    PrintHtml printHtml(testMode, json, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin);
+    PrintHtml printHtml(testMode, json, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper);
 
     // Connect up the signals
     QObject::connect(&printHtml, SIGNAL(finished()), &app, SLOT(quit()));
