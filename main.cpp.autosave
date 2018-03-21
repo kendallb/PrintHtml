@@ -50,7 +50,6 @@ int main(
     double bottomMargin = 0.5;
     QString paper = "";
     QStringList urls;
-
     bool testMode = false;
     bool json = false;
     if (argc < 2) {
