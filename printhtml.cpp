@@ -122,14 +122,14 @@ void PrintHtml::htmlLoaded(
                 }
                 // Start making the STDOUT JSON when hit the last url
                 for (QStringList::Iterator S =  printed.begin(); S != printed.end(); S++) {
-                    succeeded += "\""+*S+"\"";
+                    succeeded += "\"" + *S + "\"";
                     if (S != printed.end() && succeeded.lastIndexOf(QChar(',')) != succeeded.length() - 1) {
                         succeeded += ",";
                     }
 
                 }
                 for (QStringList::Iterator S = error.begin(); S != error.end(); S++) {
-                    failed += "\""+*S+"\"";
+                    failed += "\"" + *S + "\"";
                     if (S != error.end() && failed.lastIndexOf(QChar(',')) != failed.length() - 1) {
                         failed += ",";
                     }
@@ -143,13 +143,13 @@ void PrintHtml::htmlLoaded(
             if (!loadNextUrl()) {
                  // Start making the STDOUT JSON when hit the last url
                 for (QStringList::Iterator S = printed.begin(); S != printed.end(); S++) {
-                    succeeded += "\""+*S+"\"";
+                    succeeded += "\"" + *S + "\"";
                     if (S != printed.end() && succeeded.lastIndexOf(QChar(',')) != succeeded.length() - 1) {
                         succeeded += ",";
                     }
                 }
                 for (QStringList::Iterator S = error.begin(); S != error.end(); S++) {
-                    failed += "\""+*S+"\"";
+                    failed += "\"" + *S + "\"";
                     if (S != error.end() && failed.lastIndexOf(QChar(',')) != failed.length() - 1) {
                         failed += ",";
                     }
