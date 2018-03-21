@@ -41,9 +41,9 @@ PrintHtml::PrintHtml(bool testMode,bool json, QStringList urls, QString selected
         printer->setPrinterName(selectedPrinter);
     }
     printer->setOrientation(QPrinter::Portrait);
-    if (paper.toLower()=="a4"){
+    if (paper.toLower()=="a4") {
         printer->setPaperSize(QPrinter::A4);
-    }else if(paper.toLower()=="letter") {
+    } else if(paper.toLower()=="letter") {
         printer->setPaperSize(QPrinter::Letter);
     }
 
