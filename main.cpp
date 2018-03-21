@@ -39,26 +39,31 @@ int main(
 {
     // Start the application. Must be a Windows app in order to use Qt WebKit
     QApplication app(argc, argv);
-
-    // Parse the command line
+    // Initialize QString for success and failed json array
+    QString succeeded = "";
+    QString failed = "";
     QString printer = "Default";
+    // Parse the command line
     double leftMargin = 0.5;
     double topMargin = 0.5;
     double rightMargin = 0.5;
     double bottomMargin = 0.5;
-    QString paper = "letter";
+    QString paper = "";
     QStringList urls;
+
     bool testMode = false;
+    bool json = false;
     if (argc < 2) {
-        QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] <url> [url2]\n\n";
-        usage += "-test          - Don't print, just show what would have printed.\n";
-        usage += "-p printer     - Printer to print to. Use 'Default' for default printer.\n";
-        usage += "-l left        - Optional left margin for page.\n";
-        usage += "-t top         - Optional top margin for page.\n";
-        usage += "-r right       - Optional right margin for page.\n";
-        usage += "-b bottom      - Optional bottom margin for page.\n";
-        usage += "-a [A4|Letter] - Optional paper type.\n";
-        usage += "url            - Defines the list of URLs to print, one after the other.\n";
+        QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] <url> [url2]\n\n";
+        usage += "-test         \t- Don't print, just show what would have printed.\n";
+        usage += "-p printer    \t- Printer to print to. Use 'Default' for default printer.\n";
+        usage += "-l left       \t- Optional left margin for page.\n";
+        usage += "-t top        \t- Optional top margin for page.\n";
+        usage += "-r right      \t- Optional right margin for page.\n";
+        usage += "-b bottom     \t- Optional bottom margin for page.\n";
+        usage += "url           \t- Defines the list of URLs to print, one after the other.\n";
+        usage += "-a [A4|Letter]\t- Optional paper type blank for not set paper.\n ";
+        usage += "-json         \t- Optional Stdout array of success and error without MsgBox. \n";
         QMessageBox msgBox;
         msgBox.setWindowTitle("PrintHtml Usage");
         msgBox.setText(usage);
@@ -81,6 +86,8 @@ int main(
             bottomMargin = atof(argv[++i]);
         } else if (arg == "-a") {
             paper = argv[++i];
+        } else if (arg == "-json"){
+            json = true;
         } else {
             urls << arg;
         }
@@ -94,8 +101,8 @@ int main(
     // Once the apps are deployed however, the files are all in the same directory.
     // And on Windows, the build files are under the debug directory, so we need
     // to look for them back one directory from the build directory. Confused yet!?
-    QString dataPath = qApp->applicationDirPath();
 
+    QString dataPath = QApplication::applicationDirPath();
     // Now set the default SSL socket certificates for this program to our own CA bundle
     QFile* caBundle = new QFile(dataPath + "/ca-bundle.crt");
     if (caBundle->open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -105,7 +112,7 @@ int main(
     } else {
         QMessageBox msgBox;
         msgBox.setWindowTitle("Fatal Error");
-        msgBox.setText("Cannot find SSL certificates bundle!");
+        msgBox.setText(dataPath+"Cannot find SSL certificates bundle!....");
         msgBox.exec();
         return -1;
     }
@@ -116,7 +123,7 @@ int main(
     app.setLibraryPaths(paths);
 
     // Create the HTML printer class
-    PrintHtml printHtml(testMode, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper);
+    PrintHtml printHtml(testMode, json, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper);
 
     // Connect up the signals
     QObject::connect(&printHtml, SIGNAL(finished()), &app, SLOT(quit()));

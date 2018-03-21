@@ -27,6 +27,8 @@ Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] 
 -t top        - Optional top margin for page.
 -r right      - Optional right margin for page.
 -b bottom     - Optional bottom margin for page.
+-a [A4|Letter]- Optional paper type. blank for not set paper.
+-json         - Optional Stdout array of success and error without MsgBox.
 url           - Defines the list of URLs to print, one after the other.
 ~~~~
 
