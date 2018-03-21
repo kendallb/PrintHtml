@@ -43,7 +43,7 @@ PrintHtml::PrintHtml(bool testMode,bool json, QStringList urls, QString selected
     printer->setOrientation(QPrinter::Portrait);
     if (paper.toLower()=="a4") {
         printer->setPaperSize(QPrinter::A4);
-    } else if(paper.toLower()=="letter") {
+    } else if (paper.toLower()=="letter") {
         printer->setPaperSize(QPrinter::Letter);
     }
 
@@ -118,24 +118,24 @@ void PrintHtml::htmlLoaded(
             if (!loadNextUrl()) {
                 // Bail if that was the last one
                 if (this->testMode) {
-                    printf("{\"success\":\""+this->url.toAscii()+"\"}");
+                    printf("{\"success\":\"" + this->url.toAscii() + "\"}");
                 }
                 // Start making the STDOUT JSON when hit the last url
                 for (QStringList::Iterator S =  printed.begin(); S != printed.end(); S++) {
                     succeeded += "\""+*S+"\"";
-                    if (S != printed.end() && succeeded.lastIndexOf(QChar(',')) != succeeded.length()-1) {
+                    if (S != printed.end() && succeeded.lastIndexOf(QChar(',')) != succeeded.length() - 1) {
                         succeeded += ",";
                     }
 
                 }
                 for (QStringList::Iterator S = error.begin(); S != error.end(); S++) {
                     failed += "\""+*S+"\"";
-                    if (S != error.end() && failed.lastIndexOf(QChar(',')) != failed.length()-1) {
+                    if (S != error.end() && failed.lastIndexOf(QChar(',')) != failed.length() - 1) {
                         failed += ",";
                     }
 
                 }
-                printf("{\"error\":["+failed.left(failed.length()-1).toAscii()+"],\"success\":["+succeeded.left(succeeded.length()-1).toAscii()+"]}");
+                printf("{\"error\":[" + failed.left(failed.length() - 1).toAscii() + "],\"success\":[" + succeeded.left(succeeded.length() - 1).toAscii() + "]}");
                 QCoreApplication::exit(0);
             }
         } else {
@@ -144,18 +144,18 @@ void PrintHtml::htmlLoaded(
                  // Start making the STDOUT JSON when hit the last url
                 for (QStringList::Iterator S = printed.begin(); S != printed.end(); S++) {
                     succeeded += "\""+*S+"\"";
-                    if (S != printed.end() && succeeded.lastIndexOf(QChar(',')) != succeeded.length()-1) {
+                    if (S != printed.end() && succeeded.lastIndexOf(QChar(',')) != succeeded.length() - 1) {
                         succeeded += ",";
                     }
                 }
                 for (QStringList::Iterator S = error.begin(); S != error.end(); S++) {
                     failed += "\""+*S+"\"";
-                    if (S != error.end() && failed.lastIndexOf(QChar(',')) != failed.length()-1) {
+                    if (S != error.end() && failed.lastIndexOf(QChar(',')) != failed.length() - 1) {
                         failed += ",";
                     }
 
                 }
-                printf("{\"error\":["+failed.left(failed.length()-1).toAscii()+"],\"success\":["+succeeded.left(succeeded.length()-1).toAscii()+"]}");
+                printf("{\"error\":[" + failed.left(failed.length()-1).toAscii() + "],\"success\":[" + succeeded.left(succeeded.length() - 1).toAscii() + "]}");
                 QCoreApplication::exit(0);
             }
         }
