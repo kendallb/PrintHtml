@@ -23,6 +23,7 @@ Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] 
 
 -test         - Don't print, just show what would have printed.
 -p printer    - Printer to print to. Use 'Default' for default printer.
+-a page       - Paper type [A4|A3|US letter]
 -l left       - Optional left margin for page.
 -t top        - Optional top margin for page.
 -r right      - Optional right margin for page.
