@@ -57,7 +57,7 @@ int main(
         usage += "-t top         - Optional top margin for page.\n";
         usage += "-r right       - Optional right margin for page.\n";
         usage += "-b bottom      - Optional bottom margin for page.\n";
-        usage += "-a [A4|Letter] - Optional paper type.\n";
+        usage += "-a [A4|A5|Letter] - Optional paper type.\n";
         usage += "url            - Defines the list of URLs to print, one after the other.\n";
         QMessageBox msgBox;
         msgBox.setWindowTitle("PrintHtml Usage");
