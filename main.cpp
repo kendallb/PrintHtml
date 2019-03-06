@@ -47,18 +47,20 @@ int main(
     double rightMargin = 0.5;
     double bottomMargin = 0.5;
     QString paper = "letter";
+    QString orientation = "portrait";
     QStringList urls;
     bool testMode = false;
     if (argc < 2) {
-        QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] <url> [url2]\n\n";
-        usage += "-test          - Don't print, just show what would have printed.\n";
-        usage += "-p printer     - Printer to print to. Use 'Default' for default printer.\n";
-        usage += "-l left        - Optional left margin for page.\n";
-        usage += "-t top         - Optional top margin for page.\n";
-        usage += "-r right       - Optional right margin for page.\n";
-        usage += "-b bottom      - Optional bottom margin for page.\n";
-        usage += "-a [A4|A5|Letter] - Optional paper type.\n";
-        usage += "url            - Defines the list of URLs to print, one after the other.\n";
+        QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] [-o orientation] <url> [url2]\n\n";
+        usage += "-test                   - Don't print, just show what would have printed.\n";
+        usage += "-p printer              - Printer to print to. Use 'Default' for default printer.\n";
+        usage += "-l left                 - Optional left margin for page.\n";
+        usage += "-t top                  - Optional top margin for page.\n";
+        usage += "-r right                - Optional right margin for page.\n";
+        usage += "-b bottom               - Optional bottom margin for page.\n";
+        usage += "-a [A4|A5|Letter]       - Optional paper type.\n";
+        usage += "-o [Portrait|Landscape] - Optional orientation type.\n";
+        usage += "url                     - Defines the list of URLs to print, one after the other.\n";
         QMessageBox msgBox;
         msgBox.setWindowTitle("PrintHtml Usage");
         msgBox.setText(usage);
@@ -81,6 +83,8 @@ int main(
             bottomMargin = atof(argv[++i]);
         } else if (arg == "-a") {
             paper = argv[++i];
+        } else if (arg == "-o") {
+            orientation = argv[++i];
         } else {
             urls << arg;
         }
@@ -116,7 +120,7 @@ int main(
     app.setLibraryPaths(paths);
 
     // Create the HTML printer class
-    PrintHtml printHtml(testMode, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper);
+    PrintHtml printHtml(testMode, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper, orientation);
 
     // Connect up the signals
     QObject::connect(&printHtml, SIGNAL(finished()), &app, SLOT(quit()));
