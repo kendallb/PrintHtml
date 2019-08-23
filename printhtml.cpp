@@ -56,6 +56,9 @@ PrintHtml::PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, d
     }
     printer->setPageMargins(leftMargin, topMargin, rightMargin, bottomMargin, QPrinter::Inch);
 
+    printer->setPrintRange(QPrinter::PageRange);
+    printer->setFromTo(0,1);
+
     // Create our web page
     webPage = new QWebPage();
 
@@ -115,7 +118,7 @@ void PrintHtml::htmlLoaded(
     if (ok) {
         // Print the page if not in test mode
         if (!this->testMode) {
-            webPage->mainFrame()->setZoomFactor(1.2);
+            webPage->mainFrame()->setZoomFactor(1.0);
             webPage->mainFrame()->print(printer);
         }
         printed << this->url;
