@@ -27,6 +27,7 @@
 #define PRINTHTML_H
 
 #include <QObject>
+#include <QPrinter>
 #include <QCoreApplication>
 
 class PrintHtml : public QObject

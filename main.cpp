@@ -25,7 +25,8 @@
 
 #include "printhtml.h"
 #include "globals.h"
-
+#include <QApplication>
+#include <QMessageBox>
 /*
  * Main program entry point
  *

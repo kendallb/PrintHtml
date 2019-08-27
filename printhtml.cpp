@@ -25,7 +25,9 @@
 
 #include "printhtml.h"
 #include <QDebug>
-
+#include <QWebPage>
+#include <QWebFrame>
+#include <QMessageBox>
 /*
  * Constructor for the HTML printing class
  */
@@ -118,7 +120,7 @@ void PrintHtml::htmlLoaded(
             if (!loadNextUrl()) {
                 // Bail if that was the last one
                 if (this->testMode) {
-                    printf("{\"success\":\"" + this->url.toAscii() + "\"}");
+                    printf("{\"success\":\"" + this->url.toLatin1() + "\"}");
                 }
                 // Start making the STDOUT JSON when hit the last url
                 for (QStringList::Iterator S =  printed.begin(); S != printed.end(); S++) {
@@ -135,7 +137,7 @@ void PrintHtml::htmlLoaded(
                     }
 
                 }
-                printf("{\"error\":[" + failed.left(failed.length() - 1).toAscii() + "],\"success\":[" + succeeded.left(succeeded.length() - 1).toAscii() + "]}");
+                printf("{\"error\":[" + failed.left(failed.length() - 1).toLatin1() + "],\"success\":[" + succeeded.left(succeeded.length() - 1).toLatin1() + "]}");
                 QCoreApplication::exit(0);
             }
         } else {
@@ -155,7 +157,7 @@ void PrintHtml::htmlLoaded(
                     }
 
                 }
-                printf("{\"error\":[" + failed.left(failed.length()-1).toAscii() + "],\"success\":[" + succeeded.left(succeeded.length() - 1).toAscii() + "]}");
+                printf("{\"error\":[" + failed.left(failed.length()-1).toLatin1() + "],\"success\":[" + succeeded.left(succeeded.length() - 1).toLatin1() + "]}");
                 QCoreApplication::exit(0);
             }
         }
