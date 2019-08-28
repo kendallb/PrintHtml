@@ -32,7 +32,7 @@
  * Constructor for the HTML printing class
  */
 
-PrintHtml::PrintHtml(bool testMode,bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin, double rightMargin, double bottomMargin, QString paper)
+PrintHtml::PrintHtml(bool testMode,bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin, double rightMargin, double bottomMargin, qreal zoomFactor, QString paper)
 {
     // Get the instance of the main application
     app = QCoreApplication::instance();
@@ -60,6 +60,7 @@ PrintHtml::PrintHtml(bool testMode,bool json, QStringList urls, QString selected
     // Save test mode
     this->testMode = testMode;
     this->json = json;
+    this->zoomFactor = zoomFactor;
 }
 
 /*
@@ -113,7 +114,7 @@ void PrintHtml::htmlLoaded(
         if (ok) {
             // Print the page if not in test mode
             if (!this->testMode) {
-                webPage->mainFrame()->setZoomFactor(1.2);
+                webPage->mainFrame()->setZoomFactor(zoomFactor);
                 webPage->mainFrame()->print(printer);
             }
             printed << this->url;
@@ -165,7 +166,7 @@ void PrintHtml::htmlLoaded(
         if (ok) {
             // Print the page if not in test mode
             if (!this->testMode) {
-                webPage->mainFrame()->setZoomFactor(1.2);
+                webPage->mainFrame()->setZoomFactor(zoomFactor);
                 webPage->mainFrame()->print(printer);
             }
             printed << this->url;

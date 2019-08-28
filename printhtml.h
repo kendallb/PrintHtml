@@ -37,7 +37,7 @@ private:
     QCoreApplication *app;
 
 public:
-    PrintHtml(bool testMode, bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin, double rightMargin, double bottomMargin, QString paper);
+    PrintHtml(bool testMode, bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin, double rightMargin, double bottomMargin, qreal zoomFactor, QString paper);
     void quit();
 
 private:
@@ -60,6 +60,7 @@ private:
     QPrinter        *printer;   // Printer object that we print to
     QWebPage        *webPage;   // QWebPage class for printing
     QString         url;
+    qreal           zoomFactor;
     QStringList     printed;
     QStringList     error;
     QString         succeeded;

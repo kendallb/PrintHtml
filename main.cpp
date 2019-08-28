@@ -49,6 +49,7 @@ int main(
     double topMargin = 0.5;
     double rightMargin = 0.5;
     double bottomMargin = 0.5;
+    qreal zoomFactor = 1.0;
     QString paper = "";
     QStringList urls;
 
@@ -65,6 +66,7 @@ int main(
         usage += "url           \t- Defines the list of URLs to print, one after the other.\n";
         usage += "-a [A4|Letter]\t- Optional paper type blank for not set paper.\n ";
         usage += "-json         \t- Optional Stdout array of success and error without MsgBox. \n";
+        usage += "-z            \t- Optional zoomFactor for zoom media \n";
         QMessageBox msgBox;
         msgBox.setWindowTitle("PrintHtml Usage");
         msgBox.setText(usage);
@@ -89,7 +91,10 @@ int main(
             paper = argv[++i];
         } else if (arg == "-json"){
             json = true;
-        } else {
+        } else if (arg == "-z"){
+            zoomFactor = atof(argv[++i]);
+        }
+        else {
             urls << arg;
         }
     }
@@ -124,7 +129,7 @@ int main(
     app.setLibraryPaths(paths);
 
     // Create the HTML printer class
-    PrintHtml printHtml(testMode, json, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper);
+    PrintHtml printHtml(testMode, json, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin,zoomFactor, paper);
 
     // Connect up the signals
     QObject::connect(&printHtml, SIGNAL(finished()), &app, SLOT(quit()));

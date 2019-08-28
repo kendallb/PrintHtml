@@ -8,7 +8,7 @@ INCLUDEPATH += ../includes ../common
 DEPENDPATH += ../includes ../common
 PRECOMPILED_HEADER = stable.h
 precompile_header:!isEmpty(PRECOMPILED_HEADER):DEFINES += USING_PCH
-QT += network webkitwidgets printsupport
+QT += network webkitwidgets printsupport webenginewidgets
 
 HEADERS = stable.h \
     globals.h \
