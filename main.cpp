@@ -48,19 +48,25 @@ int main(
     double bottomMargin = 0.5;
     QString paper = "letter";
     QString orientation = "portrait";
+    int pageFrom = 0;
+    int pageTo = 0;
     QStringList urls;
     bool testMode = false;
     if (argc < 2) {
-        QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] [-o orientation] <url> [url2]\n\n";
-        usage += "-test                   - Don't print, just show what would have printed.\n";
-        usage += "-p printer              - Printer to print to. Use 'Default' for default printer.\n";
-        usage += "-l left                 - Optional left margin for page.\n";
-        usage += "-t top                  - Optional top margin for page.\n";
-        usage += "-r right                - Optional right margin for page.\n";
-        usage += "-b bottom               - Optional bottom margin for page.\n";
-        usage += "-a [A4|A5|Letter]       - Optional paper type.\n";
-        usage += "-o [Portrait|Landscape] - Optional orientation type.\n";
-        usage += "url                     - Defines the list of URLs to print, one after the other.\n";
+        QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] [-o orientation] [-pagefrom number] [-pageto number]<url> [url2]\n\n";
+        usage += "-test                     - Don't print, just show what would have printed.\n \n";
+        usage += "-p printer                - Printer to print to. Use 'Default' for default printer.\n \n";
+        usage += "-l left                   - Optional left margin for page. (Default 0.5)\n \n";
+        usage += "-t top                    - Optional top margin for page. (Default 0.5)\n \n";
+        usage += "-r right                  - Optional right margin for page. (Default 0.5)\n \n";
+        usage += "-b bottom                 - Optional bottom margin for page. (Default 0.5)\n \n";
+        usage += "-a [A4|A5|Letter]         - Optional paper type. (Default Letter) \n \n";
+        usage += "-o [Portrait|Landscape]   - Optional orientation type. (Default Portrait)\n \n";
+        usage += "-pagefrom number          - Optional. Use for setting up the range of pages for printing. Corresponds to the first page in the page range for printing. (Must be used with \"-pageto\" parameter)\n \n";
+        usage += "-pageto number            - Optional. Use for setting up the range of pages for printing. Corresponds to the last page in the page range for printing. (Must be used with \"-pagefrom\" parameter)\n \n";
+        usage += "url                       - Defines the list of URLs to print, one after the other.\n \n \n";
+        usage += "Note: Pages in a document are numbered according to the convention that the first page is page 1. However, if from and to are both set to 0, the whole document will be printed.";
+
         QMessageBox msgBox;
         msgBox.setWindowTitle("PrintHtml Usage");
         msgBox.setText(usage);
@@ -69,25 +75,28 @@ int main(
     }
     for (int i = 1; i < argc; i++) {
         QString arg = argv[i];
-        if (arg == "-p") {
+        if (arg == "-p")
             printer = argv[++i];
-        } else if (arg == "-test") {
+        else if (arg == "-test")
             testMode = true;
-        } else if (arg == "-l") {
+        else if (arg == "-l")
             leftMargin = atof(argv[++i]);
-        } else if (arg == "-t") {
+        else if (arg == "-t")
             topMargin = atof(argv[++i]);
-        } else if (arg == "-r") {
+        else if (arg == "-r")
             rightMargin = atof(argv[++i]);
-        } else if (arg == "-b") {
+        else if (arg == "-b")
             bottomMargin = atof(argv[++i]);
-        } else if (arg == "-a") {
+        else if (arg == "-a")
             paper = argv[++i];
-        } else if (arg == "-o") {
+        else if (arg == "-o")
             orientation = argv[++i];
-        } else {
+        else if (arg.toLower() == "-pagefrom")
+            pageFrom = atoi(argv[++i]);
+        else if (arg.toLower() == "-pageto")
+            pageTo = atoi(argv[++i]);
+        else
             urls << arg;
-        }
     }
 
     // Find the application directory and store it in our global variable. Note
@@ -120,7 +129,7 @@ int main(
     app.setLibraryPaths(paths);
 
     // Create the HTML printer class
-    PrintHtml printHtml(testMode, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper, orientation);
+    PrintHtml printHtml(testMode, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper, orientation, pageFrom, pageTo);
 
     // Connect up the signals
     QObject::connect(&printHtml, SIGNAL(finished()), &app, SLOT(quit()));

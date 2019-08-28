@@ -36,7 +36,8 @@ private:
     QCoreApplication *app;
 
 public:
-    PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin, double rightMargin, double bottomMargin, QString paper, QString orientation);
+    PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
+              double rightMargin, double bottomMargin, QString paper, QString orientation, int pageFrom, int pageTo);
     void quit();
 
 private:

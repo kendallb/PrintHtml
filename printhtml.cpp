@@ -29,7 +29,8 @@
 /*
  * Constructor for the HTML printing class
  */
-PrintHtml::PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin, double rightMargin, double bottomMargin, QString paper, QString orientation)
+PrintHtml::PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
+                     double rightMargin, double bottomMargin, QString paper, QString orientation, int pageFrom, int pageTo)
 {
     // Get the instance of the main application
     app = QCoreApplication::instance();
@@ -54,10 +55,13 @@ PrintHtml::PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, d
     } else {
         printer->setPaperSize(QPrinter::Letter);
     }
+
     printer->setPageMargins(leftMargin, topMargin, rightMargin, bottomMargin, QPrinter::Inch);
 
-    printer->setPrintRange(QPrinter::PageRange);
-    printer->setFromTo(0,1);
+    if(pageFrom > 0 && pageTo > 0) {
+        printer->setPrintRange(QPrinter::PageRange);
+        printer->setFromTo(pageFrom,pageTo);
+    }
 
     // Create our web page
     webPage = new QWebPage();
@@ -118,7 +122,7 @@ void PrintHtml::htmlLoaded(
     if (ok) {
         // Print the page if not in test mode
         if (!this->testMode) {
-            webPage->mainFrame()->setZoomFactor(1.0);
+            webPage->mainFrame()->setZoomFactor(1.1);
             webPage->mainFrame()->print(printer);
         }
         printed << this->url;
