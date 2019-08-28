@@ -46,25 +46,25 @@ int main(
     double topMargin = 0.5;
     double rightMargin = 0.5;
     double bottomMargin = 0.5;
-    QString paper = "letter";
+    QString paper = "A4";
     QString orientation = "portrait";
     int pageFrom = 0;
     int pageTo = 0;
     QStringList urls;
     bool testMode = false;
     if (argc < 2) {
-        QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] [-o orientation] [-pagefrom number] [-pageto number]<url> [url2]\n\n";
-        usage += "-test                     - Don't print, just show what would have printed.\n \n";
-        usage += "-p printer                - Printer to print to. Use 'Default' for default printer.\n \n";
-        usage += "-l left                   - Optional left margin for page. (Default 0.5)\n \n";
-        usage += "-t top                    - Optional top margin for page. (Default 0.5)\n \n";
-        usage += "-r right                  - Optional right margin for page. (Default 0.5)\n \n";
-        usage += "-b bottom                 - Optional bottom margin for page. (Default 0.5)\n \n";
-        usage += "-a [A4|A5|Letter]         - Optional paper type. (Default Letter) \n \n";
-        usage += "-o [Portrait|Landscape]   - Optional orientation type. (Default Portrait)\n \n";
-        usage += "-pagefrom number          - Optional. Use for setting up the range of pages for printing. Corresponds to the first page in the page range for printing. (Must be used with \"-pageto\" parameter)\n \n";
-        usage += "-pageto number            - Optional. Use for setting up the range of pages for printing. Corresponds to the last page in the page range for printing. (Must be used with \"-pagefrom\" parameter)\n \n";
-        usage += "url                       - Defines the list of URLs to print, one after the other.\n \n \n";
+        QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] [-o orientation] [-pagefrom number] [-pageto number] <url> [url2]\n\n";
+        usage += "-test                  \t - Don't print, just show what would have printed.\n \n";
+        usage += "-p printer             \t - Printer to print to. Use 'Default' for default printer.\n \n";
+        usage += "-l left                \t - Optional left margin for page. (Default 0.5)\n \n";
+        usage += "-t top                 \t - Optional top margin for page. (Default 0.5)\n \n";
+        usage += "-r right               \t - Optional right margin for page. (Default 0.5)\n \n";
+        usage += "-b bottom              \t - Optional bottom margin for page. (Default 0.5)\n \n";
+        usage += "-a [A4|A5|Letter]      \t - Optional paper type. (Default A4) \n \n";
+        usage += "-o [Portrait|Landscape]\t - Optional orientation type. (Default Portrait)\n \n";
+        usage += "-pagefrom number       \t - Optional. Use for setting up the range of pages for printing. Corresponds to the first page in the page range for printing. (Must be used with \"-pageto\" parameter)\n \n";
+        usage += "-pageto number         \t - Optional. Use for setting up the range of pages for printing. Corresponds to the last page in the page range for printing. (Must be used with \"-pagefrom\" parameter)\n \n";
+        usage += "url                    \t - Defines the list of URLs to print, one after the other.\n \n \n";
         usage += "Note: Pages in a document are numbered according to the convention that the first page is page 1. However, if from and to are both set to 0, the whole document will be printed.";
 
         QMessageBox msgBox;
