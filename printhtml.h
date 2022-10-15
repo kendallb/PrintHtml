@@ -36,7 +36,7 @@ private:
     QCoreApplication *app;
 
 public:
-    PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
+    PrintHtml(bool testMode, bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
               double rightMargin, double bottomMargin, QString paper, QString orientation, int pageFrom, int pageTo);
     void quit();
 
@@ -55,6 +55,7 @@ private slots:
 
 private:
     bool            testMode;   // True if we are running in test mode
+    bool            json;       // True if we want the JSON stdout
     QStringList     urls;       // List of url to print
     QPrinter        *printer;   // Printer object that we print to
     QWebPage        *webPage;   // QWebPage class for printing
