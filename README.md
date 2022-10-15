@@ -23,6 +23,7 @@ Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] 
 
 -test         - Don't print, just show what would have printed.
 -p printer    - Printer to print to. Use 'Default' for default printer.
+-json         - Optional Stdout array of success and error without MsgBox.
 -a page       - Paper type [A4|A5|US letter].
 -l left       - Optional left margin for page (default value - 0.5).
 -t top        - Optional top margin for page (default value - 0.5).
