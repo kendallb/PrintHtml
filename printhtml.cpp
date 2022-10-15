@@ -29,7 +29,7 @@
 /*
  * Constructor for the HTML printing class
  */
-PrintHtml::PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
+PrintHtml::PrintHtml(bool testMode,bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
                      double rightMargin, double bottomMargin, QString paper, QString orientation, int pageFrom, int pageTo)
 {
     // Get the instance of the main application
@@ -71,6 +71,7 @@ PrintHtml::PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, d
 
     // Save test mode
     this->testMode = testMode;
+    this->json = json;
 }
 
 /*
@@ -117,32 +118,85 @@ bool PrintHtml::loadNextUrl()
  * Function called when the web page for the HTML has finished loading
  */
 void PrintHtml::htmlLoaded(
-    bool ok)
+        bool ok)
 {
-    if (ok) {
-        // Print the page if not in test mode
-        if (!this->testMode) {
-            webPage->mainFrame()->setZoomFactor(1.1);
-            webPage->mainFrame()->print(printer);
-        }
-        printed << this->url;
-        if (!loadNextUrl()) {
-            // Bail if that was the last one
-            if (this->testMode){
-                QMessageBox msgBox;
-                msgBox.setWindowTitle("Successly loaded URLs");
-                msgBox.setText(printed.join("\n"));
-                msgBox.exec();
+    if (this->json) {
+        if (ok) {
+            // Print the page if not in test mode
+            if (!this->testMode) {
+                webPage->mainFrame()->print(printer);
             }
-            QCoreApplication::exit(0);
+            printed << this->url;
+            if (!loadNextUrl()) {
+                // Bail if that was the last one
+                if (this->testMode) {
+                    printf("{\"success\":\"" + this->url.toLatin1() + "\"}");
+                }
+                // Start making the STDOUT JSON when hit the last url
+                for (QStringList::Iterator S =  printed.begin(); S != printed.end(); S++) {
+                    succeeded += "\"" + *S + "\"";
+                    if (S != printed.end() && succeeded.lastIndexOf(QChar(',')) != succeeded.length() - 1) {
+                        succeeded += ",";
+                    }
+
+                }
+                for (QStringList::Iterator S = error.begin(); S != error.end(); S++) {
+                    failed += "\"" + *S + "\"";
+                    if (S != error.end() && failed.lastIndexOf(QChar(',')) != failed.length() - 1) {
+                        failed += ",";
+                    }
+
+                }
+                printf("{\"error\":[" + failed.left(failed.length() - 1).toLatin1() + "],\"success\":[" + succeeded.left(succeeded.length() - 1).toLatin1() + "]}");
+                QCoreApplication::exit(0);
+            }
+        } else {
+            error << this->url;
+            if (!loadNextUrl()) {
+                 // Start making the STDOUT JSON when hit the last url
+                for (QStringList::Iterator S = printed.begin(); S != printed.end(); S++) {
+                    succeeded += "\"" + *S + "\"";
+                    if (S != printed.end() && succeeded.lastIndexOf(QChar(',')) != succeeded.length() - 1) {
+                        succeeded += ",";
+                    }
+                }
+                for (QStringList::Iterator S = error.begin(); S != error.end(); S++) {
+                    failed += "\"" + *S + "\"";
+                    if (S != error.end() && failed.lastIndexOf(QChar(',')) != failed.length() - 1) {
+                        failed += ",";
+                    }
+
+                }
+                printf("{\"error\":[" + failed.left(failed.length()-1).toLatin1() + "],\"success\":[" + succeeded.left(succeeded.length() - 1).toLatin1() + "]}");
+                QCoreApplication::exit(0);
+            }
         }
     } else {
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("Fatal Error");
-        msgBox.setText("HTML page failed to load!");
-        msgBox.exec();
-        QCoreApplication::exit(-1);
+        if (ok) {
+            // Print the page if not in test mode
+            if (!this->testMode) {
+                webPage->mainFrame()->print(printer);
+            }
+            printed << this->url;
+            if (!loadNextUrl()) {
+                // Bail if that was the last one
+                if (this->testMode) {
+                    QMessageBox msgBox;
+                    msgBox.setWindowTitle("Successly loaded URLs");
+                    msgBox.setText(printed.join("\n"));
+                    msgBox.exec();
+                }
+                QCoreApplication::exit(0);
+            }
+        } else {
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Fatal Error");
+            msgBox.setText("HTML page failed to load!");
+            msgBox.exec();
+            QCoreApplication::exit(-1);
+        }
     }
+
 }
 
 /*
