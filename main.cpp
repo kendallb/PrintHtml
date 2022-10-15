@@ -39,7 +39,9 @@ int main(
 {
     // Start the application. Must be a Windows app in order to use Qt WebKit
     QApplication app(argc, argv);
-
+    // Initialize QString for success and failed json array
+    QString succeeded = "";
+    QString failed = "";
     // Parse the command line
     QString printer = "Default";
     double leftMargin = 0.5;
@@ -51,11 +53,14 @@ int main(
     int pageFrom = 0;
     int pageTo = 0;
     QStringList urls;
+    
     bool testMode = false;
+    bool json = false;
     if (argc < 2) {
         QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] [-o orientation] [-pagefrom number] [-pageto number] <url> [url2]\n\n";
         usage += "-test                  \t - Don't print, just show what would have printed.\n \n";
         usage += "-p printer             \t - Printer to print to. Use 'Default' for default printer.\n \n";
+        usage += "-json                  \t- Optional Stdout array of success and error without MsgBox. \n\n";
         usage += "-l left                \t - Optional left margin for page. (Default 0.5)\n \n";
         usage += "-t top                 \t - Optional top margin for page. (Default 0.5)\n \n";
         usage += "-r right               \t - Optional right margin for page. (Default 0.5)\n \n";
@@ -95,6 +100,8 @@ int main(
             pageFrom = atoi(argv[++i]);
         else if (arg.toLower() == "-pageto")
             pageTo = atoi(argv[++i]);
+        else if (arg == "-json"){
+            json = true;
         else
             urls << arg;
     }
@@ -129,7 +136,7 @@ int main(
     app.setLibraryPaths(paths);
 
     // Create the HTML printer class
-    PrintHtml printHtml(testMode, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper, orientation, pageFrom, pageTo);
+    PrintHtml printHtml(testMode, json, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper, orientation, pageFrom, pageTo);
 
     // Connect up the signals
     QObject::connect(&printHtml, SIGNAL(finished()), &app, SLOT(quit()));
