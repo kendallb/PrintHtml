@@ -19,20 +19,27 @@ to different printers.
 The program is pretty simple and the command line usage is like this:
 
 ~~~~
-Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] [-o orientation] [-pagefrom number] [-pageto number] <url> [url2]
+Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] [-o orientation] [-pagefrom number] [-pageto number] [-json] <url> [url2]
 
--test         - Don't print, just show what would have printed.
--p printer    - Printer to print to. Use 'Default' for default printer.
--json         - Optional Stdout array of success and error without MsgBox.
--a page       - Paper type [A4|A5|US letter].
--l left       - Optional left margin for page (default value - 0.5).
--t top        - Optional top margin for page (default value - 0.5).
--r right      - Optional right margin for page (default value - 0.5).
--b bottom     - Optional bottom margin for page (default value - 0.5).
--o [Portrait|Landscape] - Optional orientation type (default value - Portrait).
--pagefrom [page number] - Optional. Use for setting up the range of pages for printing. Corresponds to the first page in the page range for printing. (Must be used with "-pageto" parameter)
--pageto [page number] - Optional. Use for setting up the range of pages for printing. Corresponds to the last page in the page range for printing. (Must be used with "-pagefrom" parameter)
-url           - Defines the list of URLs to print, one after the other.
+-test                     - Don't print, just show what would have printed.
+-p printer                - Printer to print to. Use 'Default' for default printer.
+-json                     - Optional. Output success and error lists as JSON to stdout (no message boxes).
+-a paper                  - Paper type. Options:
+                            • Standard sizes: [A4|A5|Letter]
+                            • Custom size: width,height in millimeters (e.g., 77,77)
+-l left                   - Optional left margin (default: 0.5 inches).
+-t top                    - Optional top margin (default: 0.5 inches).
+-r right                  - Optional right margin (default: 0.5 inches).
+-b bottom                 - Optional bottom margin (default: 0.5 inches).
+-o [Portrait|Landscape]   - Optional page orientation (default: Portrait).
+-pagefrom [page number]   - Optional. Start page number for printing range.
+-pageto [page number]     - Optional. End page number for printing range.
+                            (Must be used together with -pagefrom)
+url                       - One or more URLs to print (space-separated).
+
+Example (custom paper size 77x77 mm, no margins):
+
+  PrintHtml -p "YourPrinterName" -a "77,77" -l 0 -r 0 -t 0 -b 0 "https://example.com"
 ~~~~
 
 Since it has to spawn up an entire instance of the QtWebKit control in order to perform the printing
