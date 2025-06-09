@@ -37,11 +37,18 @@ private:
 
 public:
     PrintHtml(bool testMode, bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
-              double rightMargin, double bottomMargin, QString paper, QString orientation, int pageFrom, int pageTo);
+          double rightMargin, double bottomMargin, QString paper, QString orientation, int pageFrom, int pageTo,
+          double paperWidth = 0, double paperHeight = 0);
     void quit();
 
 private:
     bool loadNextUrl();
+    QStringList error;
+    QString succeeded;
+    QString failed;
+    double paperWidth;
+    double paperHeight;
+    QString paperSizeName;
 
 signals:
     void finished();
