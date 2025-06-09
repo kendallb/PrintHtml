@@ -37,6 +37,10 @@ int main(
     int argc,
     char *argv[])
 {
+    
+    double paperWidth = 0;
+    double paperHeight = 0;
+
     // Start the application. Must be a Windows app in order to use Qt WebKit
     QApplication app(argc, argv);
     // Initialize QString for success and failed json array
@@ -65,7 +69,7 @@ int main(
         usage += "-t top                 \t - Optional top margin for page. (Default 0.5)\n \n";
         usage += "-r right               \t - Optional right margin for page. (Default 0.5)\n \n";
         usage += "-b bottom              \t - Optional bottom margin for page. (Default 0.5)\n \n";
-        usage += "-a [A4|A5|Letter]      \t - Optional paper type. (Default A4) \n \n";
+        usage += "-a [A4|A5|Letter|width,height] \t - Optional paper type or custom size in mm. (Default A4)\n\n";
         usage += "-o [Portrait|Landscape]\t - Optional orientation type. (Default Portrait)\n \n";
         usage += "-pagefrom number       \t - Optional. Use for setting up the range of pages for printing. Corresponds to the first page in the page range for printing. (Must be used with \"-pageto\" parameter)\n \n";
         usage += "-pageto number         \t - Optional. Use for setting up the range of pages for printing. Corresponds to the last page in the page range for printing. (Must be used with \"-pagefrom\" parameter)\n \n";
@@ -92,15 +96,30 @@ int main(
             rightMargin = atof(argv[++i]);
         else if (arg == "-b")
             bottomMargin = atof(argv[++i]);
-        else if (arg == "-a")
+        else if (arg == "-a") {
             paper = argv[++i];
-        else if (arg == "-o")
+            if (paper.contains(',')) {
+                QStringList dims = paper.split(',');
+                if (dims.size() == 2) {
+                    bool ok1, ok2;
+                    paperWidth = dims[0].toDouble(&ok1);
+                    paperHeight = dims[1].toDouble(&ok2);
+                    if (!ok1 || !ok2 || paperWidth <= 0 || paperHeight <= 0) {
+                        QMessageBox::critical(0, "Invalid Size", "Invalid custom paper size provided in -a.");
+                        return -1;
+                    }
+                } else {
+                    QMessageBox::critical(0, "Invalid Format", "Custom size for -a should be in format width,height (e.g., 105,148).");
+                    return -1;
+                }
+            }
+        }else if (arg == "-o")
             orientation = argv[++i];
         else if (arg.toLower() == "-pagefrom")
             pageFrom = atoi(argv[++i]);
         else if (arg.toLower() == "-pageto")
             pageTo = atoi(argv[++i]);
-        else if (arg == "-json"){
+        else if (arg == "-json")
             json = true;
         else
             urls << arg;
@@ -136,7 +155,7 @@ int main(
     app.setLibraryPaths(paths);
 
     // Create the HTML printer class
-    PrintHtml printHtml(testMode, json, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper, orientation, pageFrom, pageTo);
+    PrintHtml printHtml(testMode, json, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper, orientation, pageFrom, pageTo, paperWidth, paperHeight);
 
     // Connect up the signals
     QObject::connect(&printHtml, SIGNAL(finished()), &app, SLOT(quit()));
