@@ -29,8 +29,9 @@
 /*
  * Constructor for the HTML printing class
  */
-PrintHtml::PrintHtml(bool testMode,bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
-                     double rightMargin, double bottomMargin, QString paper, QString orientation, int pageFrom, int pageTo)
+PrintHtml::PrintHtml(bool testMode, bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
+                     double rightMargin, double bottomMargin, QString paper, QString orientation, int pageFrom, int pageTo,
+                     double paperWidth, double paperHeight)
 {
     // Get the instance of the main application
     app = QCoreApplication::instance();
@@ -48,13 +49,16 @@ PrintHtml::PrintHtml(bool testMode,bool json, QStringList urls, QString selected
         printer->setOrientation(QPrinter::Portrait);
     }
 
-    if (paper == "A4") {
+    if (paperWidth > 0 && paperHeight > 0) {
+        printer->setPaperSize(QSizeF(paperWidth, paperHeight), QPrinter::Millimeter);
+    } else if (paper == "A4") {
         printer->setPaperSize(QPrinter::A4);
-    } else if(paper == "A5") {
+    } else if (paper == "A5") {
         printer->setPaperSize(QPrinter::A5);
     } else {
         printer->setPaperSize(QPrinter::Letter);
     }
+
 
     printer->setPageMargins(leftMargin, topMargin, rightMargin, bottomMargin, QPrinter::Inch);
 
@@ -72,6 +76,11 @@ PrintHtml::PrintHtml(bool testMode,bool json, QStringList urls, QString selected
     // Save test mode
     this->testMode = testMode;
     this->json = json;
+    // Store custom paper size inputs
+    this->paperWidth = paperWidth;
+    this->paperHeight = paperHeight;
+    this->paperSizeName = paper;
+
 }
 
 /*
