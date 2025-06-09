@@ -38,7 +38,7 @@ private:
 public:
     PrintHtml(bool testMode, bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
           double rightMargin, double bottomMargin, QString paper, QString orientation, int pageFrom, int pageTo,
-          double paperWidth = 0, double paperHeight = 0);
+          double paperWidth = 0, double paperHeight = 0, bool exitOnCompletion = true);
     void quit();
 
 private:
@@ -68,6 +68,7 @@ private:
     QWebPage        *webPage;   // QWebPage class for printing
     QString         url;
     QStringList     printed;
+    bool            exitOnCompletion; // Whether to exit the app when done
 };
 
 #endif // PRINTHTML_H

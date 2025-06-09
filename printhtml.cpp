@@ -31,7 +31,7 @@
  */
 PrintHtml::PrintHtml(bool testMode, bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
                      double rightMargin, double bottomMargin, QString paper, QString orientation, int pageFrom, int pageTo,
-                     double paperWidth, double paperHeight)
+                     double paperWidth, double paperHeight, bool exitOnCompletion)
 {
     // Get the instance of the main application
     app = QCoreApplication::instance();
@@ -80,6 +80,7 @@ PrintHtml::PrintHtml(bool testMode, bool json, QStringList urls, QString selecte
     this->paperWidth = paperWidth;
     this->paperHeight = paperHeight;
     this->paperSizeName = paper;
+    this->exitOnCompletion = exitOnCompletion;
 
 }
 
@@ -157,7 +158,8 @@ void PrintHtml::htmlLoaded(
 
                 }
                 printf("{\"error\":[" + failed.left(failed.length() - 1).toLatin1() + "],\"success\":[" + succeeded.left(succeeded.length() - 1).toLatin1() + "]}");
-                QCoreApplication::exit(0);
+                if (exitOnCompletion)
+                    QCoreApplication::exit(0);
             }
         } else {
             error << this->url;
@@ -177,7 +179,8 @@ void PrintHtml::htmlLoaded(
 
                 }
                 printf("{\"error\":[" + failed.left(failed.length()-1).toLatin1() + "],\"success\":[" + succeeded.left(succeeded.length() - 1).toLatin1() + "]}");
-                QCoreApplication::exit(0);
+                if (exitOnCompletion)
+                    QCoreApplication::exit(0);
             }
         }
     } else {
@@ -195,14 +198,16 @@ void PrintHtml::htmlLoaded(
                     msgBox.setText(printed.join("\n"));
                     msgBox.exec();
                 }
-                QCoreApplication::exit(0);
+                if (exitOnCompletion)
+                    QCoreApplication::exit(0);
             }
         } else {
             QMessageBox msgBox;
             msgBox.setWindowTitle("Fatal Error");
             msgBox.setText("HTML page failed to load!");
             msgBox.exec();
-            QCoreApplication::exit(-1);
+                if (exitOnCompletion)
+                    QCoreApplication::exit(-1);
         }
     }
 

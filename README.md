@@ -20,6 +20,7 @@ The program is pretty simple and the command line usage is like this:
 
 ~~~~
 Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] [-o orientation] [-pagefrom number] [-pageto number] [-json] <url> [url2]
+       [-server port]
 
 -test                     - Don't print, just show what would have printed.
 -p printer                - Printer to print to. Use 'Default' for default printer.
@@ -35,11 +36,20 @@ Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] 
 -pagefrom [page number]   - Optional. Start page number for printing range.
 -pageto [page number]     - Optional. End page number for printing range.
                             (Must be used together with -pagefrom)
+ -server [port]           - Start REST server on the given port.
 url                       - One or more URLs to print (space-separated).
 
 Example (custom paper size 77x77 mm, no margins):
 
   PrintHtml -p "YourPrinterName" -a "77,77" -l 0 -r 0 -t 0 -b 0 "https://example.com"
+
+REST server example (listen on port 9090):
+
+  PrintHtml -server 9090
+
+Custom size via REST:
+
+  http://localhost:9090/print?url=https://example.com&a=77,77
 ~~~~
 
 ---
@@ -124,10 +134,11 @@ been quite a few discussion about this that I could find on the web, but no solu
 If anyone has ideas about how to fix this it would be great to add some options to control the headers
 and footers to this program.
 
-# Potential improvements
+# REST server mode
 
-Something that would cool to add, but I am not familar enough with Qt and C++ these days to implement, would be
-to turn this application into a small REST server that would sit in the background and accept URL's and related
-options to print them over the wire so it would be easy to use from other apps without having to resort to
-executing it on the command line. If someone more familiar with Qt and REST services knows how to build a basic
-REST server into the app that would be a pretty slick improvement.
+PrintHtml can also run as a lightweight REST service. Start the application with
+`-server [port]` (default `8080`) and it will listen for HTTP requests. Send a
+`GET /print` request with query parameters matching the command line options
+(such as `url`, `printer`, `left`, `top`, etc.) and the requested page will be
+printed. Custom paper sizes can be provided using `width` and `height` query
+parameters or the shorthand `a=WIDTH,HEIGHT`.

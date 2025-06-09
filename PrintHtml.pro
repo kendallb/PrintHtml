@@ -12,9 +12,11 @@ QT += network webkit
 
 HEADERS = stable.h \
     globals.h \
-    printhtml.h
+    printhtml.h \
+    restserver.h
 SOURCES = main.cpp \
-    printhtml.cpp
+    printhtml.cpp \
+    restserver.cpp
 FORMS =
 RESOURCES =
 

@@ -24,6 +24,7 @@
  */
 
 #include "printhtml.h"
+#include "restserver.h"
 #include "globals.h"
 
 /*
@@ -57,11 +58,13 @@ int main(
     int pageFrom = 0;
     int pageTo = 0;
     QStringList urls;
-    
+
     bool testMode = false;
     bool json = false;
+    bool serverMode = false;
+    int serverPort = 8080;
     if (argc < 2) {
-        QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] [-o orientation] [-pagefrom number] [-pageto number] <url> [url2]\n\n";
+        QString usage = "Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] [-o orientation] [-pagefrom number] [-pageto number] [-server port] <url> [url2]\n\n";
         usage += "-test                  \t - Don't print, just show what would have printed.\n \n";
         usage += "-p printer             \t - Printer to print to. Use 'Default' for default printer.\n \n";
         usage += "-json                  \t- Optional Stdout array of success and error without MsgBox. \n\n";
@@ -71,6 +74,7 @@ int main(
         usage += "-b bottom              \t - Optional bottom margin for page. (Default 0.5)\n \n";
         usage += "-a [A4|A5|Letter|width,height] \t - Optional paper type or custom size in mm. (Default A4)\n\n";
         usage += "-o [Portrait|Landscape]\t - Optional orientation type. (Default Portrait)\n \n";
+        usage += "-server [port]        \t - Run as REST server on given port (default 8080).\n \n";
         usage += "-pagefrom number       \t - Optional. Use for setting up the range of pages for printing. Corresponds to the first page in the page range for printing. (Must be used with \"-pageto\" parameter)\n \n";
         usage += "-pageto number         \t - Optional. Use for setting up the range of pages for printing. Corresponds to the last page in the page range for printing. (Must be used with \"-pagefrom\" parameter)\n \n";
         usage += "url                    \t - Defines the list of URLs to print, one after the other.\n \n \n";
@@ -121,6 +125,11 @@ int main(
             pageTo = atoi(argv[++i]);
         else if (arg == "-json")
             json = true;
+        else if (arg == "-server") {
+            serverMode = true;
+            if (i + 1 < argc && QString(argv[i+1]).at(0) != '-')
+                serverPort = atoi(argv[++i]);
+        }
         else
             urls << arg;
     }
@@ -154,8 +163,17 @@ int main(
     paths.prepend(dataPath + "/plugins");
     app.setLibraryPaths(paths);
 
+    if (serverMode) {
+        RestServer server;
+        if (!server.listen(serverPort)) {
+            QMessageBox::critical(0, "Server Error", "Unable to start server");
+            return -1;
+        }
+        return app.exec();
+    }
+
     // Create the HTML printer class
-    PrintHtml printHtml(testMode, json, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper, orientation, pageFrom, pageTo, paperWidth, paperHeight);
+    PrintHtml printHtml(testMode, json, urls, printer, leftMargin, topMargin, rightMargin, bottomMargin, paper, orientation, pageFrom, pageTo, paperWidth, paperHeight, true);
 
     // Connect up the signals
     QObject::connect(&printHtml, SIGNAL(finished()), &app, SLOT(quit()));
