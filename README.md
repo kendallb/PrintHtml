@@ -42,28 +42,79 @@ Example (custom paper size 77x77 mm, no margins):
   PrintHtml -p "YourPrinterName" -a "77,77" -l 0 -r 0 -t 0 -b 0 "https://example.com"
 ~~~~
 
+---
+
+## 🛠️ Building from Source
+
+To compile this project on Windows, follow these steps:
+
+### 1. Download the required MinGW toolchain
+
+Download and extract the following toolchain (compatible with Qt 4.8.6):
+
+🔗 [i686-4.8.2-release-posix-dwarf-rt\_v3-rev3.7z](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/4.8.2/threads-posix/dwarf/i686-4.8.2-release-posix-dwarf-rt_v3-rev3.7z)
+
+📂 Extract it to a directory like:
+
+```
+E:/mingw32
+```
+
+---
+
+### 2. Install Qt 4.8.6
+
+Download and install Qt 4.8.6 built for MinGW 4.8.2:
+
+🔗 [qt-opensource-windows-x86-mingw482-4.8.6-1.exe](https://download.qt.io/archive/qt/4.8/4.8.6/qt-opensource-windows-x86-mingw482-4.8.6-1.exe)
+
+Make sure to install it to a path without spaces, such as:
+
+```
+E:/Qt/4.8.6
+```
+
+---
+
+### 3. Build the Project
+
+Open **Qt 4.8.6 Command Prompt**, then navigate to the project folder:
+
+```sh
+cd E:\PrintHtml-master\PrintHtml-master
+```
+
+Run the following commands:
+
+```sh
+qmake
+mingw32-make release
+```
+
+After a successful build, the executable will be found in the `release` directory.
+
+
+## 🔽 Precompiled Version (Download and run directly)
+
+If you just want to use the tool without modifying or compiling the source code:
+
+📦 A precompiled executable is available in:
+
+```
+release\release.zip
+```
+
+Simply extract it and run `PrintHtml.exe` as needed — no setup or installation required.
+
+---
+
+
+
 Since it has to spawn up an entire instance of the QtWebKit control in order to perform the printing
 the program is written to accept multiple URL's on the command line, one after the other. So if you have
 large batches of URL's to print, like we do simply pass them all on the command line. In our case we
 print our pick sheets using this tool by passing in batches of 20 URL's at a time and it works very fast
 without anything showing on the screen.
-
-# Build environment
-
-To build this you need to use a version of Qt that includes the QtWebKit control. This control was deprecated
-and removed from the Qt 5.x releases, and although there is an external project that has ported the QtWebKit
-control to the latest Qt releases, I was unable to find any pre-compiled libraries I could use out of the box
-for this project. Hence for simplicity I decided to stick to using Qt 4.8 and as of today the code is written
-to compile and link with Qt 4.8.6 using the Qt Creator that came with the Qt 5.7.1 release by installing
-Qt 4.8.6 alongside it. The build in the deploy directory is built using MingW 5.3 as a 32-bit x86 application.
-
-Theoretically the code is 100% portable so you could build it for Mac or Linux, but I have only done it on
-Windows since that is what I needed it for :)
-
-# Pre-built binaries
-
-For those who just want the resulting app and do not want to compile the code yourselves, I have included a
-pre-built Windows x86 version of the program in the deploy directory.
 
 # Caveats
 
