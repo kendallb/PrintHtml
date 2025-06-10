@@ -138,26 +138,7 @@ and footers to this program.
 
 PrintHtml can also run as a lightweight REST service. Start the application with
 `-server [port]` (default `8080`) and it will listen for HTTP requests. Send a
-`GET /print` request using query parameters that match the command line options
-(such as `url`, `printer`, `left`, `top`, etc.) or their short forms (`p`, `l`,
-`t`, `r`, `b`, `o`, `a`). The server accepts either style of parameter and
-always returns a JSON response. Custom paper sizes can be provided using
-`width` and `height` query parameters or the shorthand `a=WIDTH,HEIGHT`.
-
-
-<h4>🧾 REST Parameters</h4>
-
-Parameter | Description
--- | --
-url | Page URL to print (required)
-p | Printer name
-a | Paper size (e.g., A4, Letter, or custom WIDTH,HEIGHT in mm)
-l, t, r, b | Margins (in inches, optional)
-o | Orientation (Portrait or Landscape)
-pagefrom, pageto | Print range
-
-
-<h4>🧪 Example (REST + Custom Size)</h4>
-<pre><code class="language-http">http://localhost:9090/print?url=https://example.com&amp;p=Default&amp;a=77,77&amp;l=0&amp;t=0&amp;r=0&amp;b=0
-</code></pre>
-<hr>
+`GET /print` request with query parameters matching the command line options
+(such as `url`, `printer`, `left`, `top`, etc.) and the requested page will be
+printed. Custom paper sizes can be provided using `width` and `height` query
+parameters or the shorthand `a=WIDTH,HEIGHT`.

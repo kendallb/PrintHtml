@@ -44,7 +44,7 @@ void RestServer::readClient()
 
     QString requestLine = QString::fromUtf8(client->readLine()).trimmed();
     if (!requestLine.startsWith("GET")) {
-        client->write("HTTP/1.1 400 Bad Request\r\nContent-Type: application/json\r\n\r\n{\"error\":\"bad request\"}");
+        client->write("HTTP/1.1 400 Bad Request\r\n\r\n");
         client->disconnectFromHost();
         return;
     }
@@ -53,31 +53,18 @@ void RestServer::readClient()
     QString endpoint = path.section('?', 0, 0);
     QString query = path.section('?', 1);
     QMap<QString, QString> params = parseQuery(query);
-    // Support short option names for compatibility with command line flags
-    if (params.contains("p") && !params.contains("printer"))
-        params.insert("printer", params.value("p"));
-    if (params.contains("l") && !params.contains("left"))
-        params.insert("left", params.value("l"));
-    if (params.contains("t") && !params.contains("top"))
-        params.insert("top", params.value("t"));
-    if (params.contains("r") && !params.contains("right"))
-        params.insert("right", params.value("r"));
-    if (params.contains("b") && !params.contains("bottom"))
-        params.insert("bottom", params.value("b"));
-    if (params.contains("o") && !params.contains("orientation"))
-        params.insert("orientation", params.value("o"));
-    if (params.contains("a") && !params.contains("paper"))
-        params.insert("paper", params.value("a"));
 
     if (endpoint == "/print" && params.contains("url")) {
+        QByteArray resp = "";
+
         QStringList urls; urls << params.value("url");
-        QString printer = params.value("printer", "Default");
-        double l = params.value("left", "0.5").toDouble();
-        double t = params.value("top", "0.5").toDouble();
-        double r = params.value("right", "0.5").toDouble();
-        double b = params.value("bottom", "0.5").toDouble();
-        QString paper = params.value("paper", "A4");
-        QString orient = params.value("orientation", "portrait");
+        QString printer = params.value("p", "Default");
+        double l = params.value("l", "0.5").toDouble();
+        double t = params.value("t", "0.5").toDouble();
+        double r = params.value("r", "0.5").toDouble();
+        double b = params.value("b", "0.5").toDouble();
+        QString paper = params.value("a", "A4");
+        QString orient = params.value("o", "portrait");
         int pageFrom = params.value("pagefrom", "0").toInt();
         int pageTo = params.value("pageto", "0").toInt();
         double width = params.value("width", "0").toDouble();
@@ -94,16 +81,31 @@ void RestServer::readClient()
                 }
             }
         }
+        // Prepare the response in json
+        resp = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n";
+        resp += "[{\"status\":\"started\",\"printer\":\"" + QUrl::toPercentEncoding(printer) + "\",";
+        resp += "\"urls\":[";
+        for (int i = 0; i < urls.size(); ++i) {
+            resp += "\"" + QUrl::toPercentEncoding(urls[i]) + "\"";
+            if (i < urls.size() - 1) {
+                resp += ",";
+            }
+        }
+        resp += "],\"left\":" + QString::number(l) + ",\"top\":" + QString::number(t) +
+                ",\"right\":" + QString::number(r) + ",\"bottom\":" + QString::number(b) +
+                ",\"paper\":\"" + QUrl::toPercentEncoding(paper) + "\",\"orientation\":\"" +
+                QUrl::toPercentEncoding(orient) + "\",\"pageFrom\":" + QString::number(pageFrom) +
+                ",\"pageTo\":" + QString::number(pageTo);
+        resp += ",\"width\":" + QString::number(width) + ",\"height\":" + QString::number(height) + "}\r\n";
+        
 
-        PrintHtml *job = new PrintHtml(false, true, urls, printer, l, t, r, b, paper, orient, pageFrom, pageTo, width, height, false);
+        PrintHtml *job = new PrintHtml(false, true, urls, printer, l, t, r, b, paper, orient, pageFrom, pageTo, width, height, false, client, resp);
         connect(job, SIGNAL(finished()), job, SLOT(deleteLater()));
         QTimer::singleShot(0, job, SLOT(run()));
 
-        QByteArray resp = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"status\":\"started\"}";
-        client->write(resp);
-        client->disconnectFromHost();
+        
     } else {
-        client->write("HTTP/1.1 404 Not Found\r\nContent-Type: application/json\r\n\r\n{\"error\":\"not found\"}");
+        client->write("HTTP/1.1 404 Not Found\r\n\r\n");
         client->disconnectFromHost();
     }
 }

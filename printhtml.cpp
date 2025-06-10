@@ -23,15 +23,21 @@
  * SOFTWARE.
  */
 
+
+
 #include "printhtml.h"
 #include <QDebug>
 
+
+#include "restserver.h"
+#include <QUrl>
+#include <QTimer>
 /*
  * Constructor for the HTML printing class
  */
 PrintHtml::PrintHtml(bool testMode, bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
                      double rightMargin, double bottomMargin, QString paper, QString orientation, int pageFrom, int pageTo,
-                     double paperWidth, double paperHeight, bool exitOnCompletion)
+                     double paperWidth, double paperHeight, bool exitOnCompletion, QTcpSocket *client, QByteArray resp)
 {
     // Get the instance of the main application
     app = QCoreApplication::instance();
@@ -81,7 +87,8 @@ PrintHtml::PrintHtml(bool testMode, bool json, QStringList urls, QString selecte
     this->paperHeight = paperHeight;
     this->paperSizeName = paper;
     this->exitOnCompletion = exitOnCompletion;
-
+    this->client = client;
+    this->resp = resp;
 }
 
 /*
@@ -178,7 +185,7 @@ void PrintHtml::htmlLoaded(
                     }
 
                 }
-                printf("{\"error\":[" + failed.left(failed.length()-1).toLatin1() + "],\"success\":[" + succeeded.left(succeeded.length() - 1).toLatin1() + "]}");
+                resp +=",{\"error\":[" + failed.left(failed.length()-1).toLatin1() + "],\"success\":[" + succeeded.left(succeeded.length() - 1).toLatin1() + "]}";
                 if (exitOnCompletion)
                     QCoreApplication::exit(0);
             }
@@ -210,7 +217,9 @@ void PrintHtml::htmlLoaded(
                     QCoreApplication::exit(-1);
         }
     }
-
+        resp += "]";
+        client->write(resp);
+        client->disconnectFromHost();
 }
 
 /*
