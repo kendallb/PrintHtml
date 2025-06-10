@@ -158,6 +158,6 @@ pagefrom, pageto | Print range
 
 
 <h4>🧪 Example (REST + Custom Size)</h4>
-<pre><code class="language-http">http://localhost:9090/print?url=https://example.com&amp;p=MyPrinter&amp;a=77,77&amp;l=0&amp;t=0&amp;r=0&amp;b=0
+<pre><code class="language-http">http://localhost:9090/print?url=https://example.com&amp;p=Default&amp;a=77,77&amp;l=0&amp;t=0&amp;r=0&amp;b=0
 </code></pre>
 <hr>
