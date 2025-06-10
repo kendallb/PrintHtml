@@ -44,7 +44,7 @@ void RestServer::readClient()
 
     QString requestLine = QString::fromUtf8(client->readLine()).trimmed();
     if (!requestLine.startsWith("GET")) {
-        client->write("HTTP/1.1 400 Bad Request\r\n\r\n");
+        client->write("HTTP/1.1 400 Bad Request\r\nContent-Type: application/json\r\n\r\n{\"error\":\"bad request\"}");
         client->disconnectFromHost();
         return;
     }
@@ -53,6 +53,21 @@ void RestServer::readClient()
     QString endpoint = path.section('?', 0, 0);
     QString query = path.section('?', 1);
     QMap<QString, QString> params = parseQuery(query);
+    // Support short option names for compatibility with command line flags
+    if (params.contains("p") && !params.contains("printer"))
+        params.insert("printer", params.value("p"));
+    if (params.contains("l") && !params.contains("left"))
+        params.insert("left", params.value("l"));
+    if (params.contains("t") && !params.contains("top"))
+        params.insert("top", params.value("t"));
+    if (params.contains("r") && !params.contains("right"))
+        params.insert("right", params.value("r"));
+    if (params.contains("b") && !params.contains("bottom"))
+        params.insert("bottom", params.value("b"));
+    if (params.contains("o") && !params.contains("orientation"))
+        params.insert("orientation", params.value("o"));
+    if (params.contains("a") && !params.contains("paper"))
+        params.insert("paper", params.value("a"));
 
     if (endpoint == "/print" && params.contains("url")) {
         QStringList urls; urls << params.value("url");
@@ -84,11 +99,11 @@ void RestServer::readClient()
         connect(job, SIGNAL(finished()), job, SLOT(deleteLater()));
         QTimer::singleShot(0, job, SLOT(run()));
 
-        QByteArray resp = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nPrinting started";
+        QByteArray resp = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n{\"status\":\"started\"}";
         client->write(resp);
         client->disconnectFromHost();
     } else {
-        client->write("HTTP/1.1 404 Not Found\r\n\r\n");
+        client->write("HTTP/1.1 404 Not Found\r\nContent-Type: application/json\r\n\r\n{\"error\":\"not found\"}");
         client->disconnectFromHost();
     }
 }
