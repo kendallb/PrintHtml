@@ -155,7 +155,6 @@ a | Paper size (e.g., A4, Letter, or custom WIDTH,HEIGHT in mm)
 l, t, r, b | Margins (in inches, optional)
 o | Orientation (Portrait or Landscape)
 pagefrom, pageto | Print range
-json | Return result as JSON (optional)
 
 
 <h4>🧪 Example (REST + Custom Size)</h4>
