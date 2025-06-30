@@ -19,40 +19,112 @@ to different printers.
 The program is pretty simple and the command line usage is like this:
 
 ~~~~
-Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] <url> [url2]
+Usage: PrintHtml [-test] [-p printer] [-l left] [-t top] [-r right] [-b bottom] [-a paper] [-o orientation] [-pagefrom number] [-pageto number] [-json] <url> [url2]
+       [-server port]
 
--test         - Don't print, just show what would have printed.
--p printer    - Printer to print to. Use 'Default' for default printer.
--a page       - Paper type [A4|A5|US letter]
--l left       - Optional left margin for page.
--t top        - Optional top margin for page.
--r right      - Optional right margin for page.
--b bottom     - Optional bottom margin for page.
-url           - Defines the list of URLs to print, one after the other.
+-test                     - Don't print, just show what would have printed.
+-p printer                - Printer to print to. Use 'Default' for default printer.
+-json                     - Optional. Output success and error lists as JSON to stdout (no message boxes).
+-a paper                  - Paper type. Options:
+                            • Standard sizes: [A4|A5|Letter]
+                            • Custom size: width,height in millimeters (e.g., 77,77)
+-l left                   - Optional left margin (default: 0.5 inches).
+-t top                    - Optional top margin (default: 0.5 inches).
+-r right                  - Optional right margin (default: 0.5 inches).
+-b bottom                 - Optional bottom margin (default: 0.5 inches).
+-o [Portrait|Landscape]   - Optional page orientation (default: Portrait).
+-pagefrom [page number]   - Optional. Start page number for printing range.
+-pageto [page number]     - Optional. End page number for printing range.
+                            (Must be used together with -pagefrom)
+ -server [port]           - Start REST server on the given port.
+url                       - One or more URLs to print (space-separated).
+
+Example (custom paper size 77x77 mm, no margins):
+
+  PrintHtml -p "YourPrinterName" -a "77,77" -l 0 -r 0 -t 0 -b 0 "https://example.com"
+
+REST server example (listen on port 9090):
+
+  PrintHtml -server 9090
+
+Custom size via REST:
+
+  http://localhost:9090/print?url=https://example.com&a=77,77
 ~~~~
+
+---
+
+## 🛠️ Building from Source
+
+To compile this project on Windows, follow these steps:
+
+### 1. Download the required MinGW toolchain
+
+Download and extract the following toolchain (compatible with Qt 4.8.6):
+
+🔗 [i686-4.8.2-release-posix-dwarf-rt\_v3-rev3.7z](https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/4.8.2/threads-posix/dwarf/i686-4.8.2-release-posix-dwarf-rt_v3-rev3.7z)
+
+📂 Extract it to a directory like:
+
+```
+E:/mingw32
+```
+
+---
+
+### 2. Install Qt 4.8.6
+
+Download and install Qt 4.8.6 built for MinGW 4.8.2:
+
+🔗 [qt-opensource-windows-x86-mingw482-4.8.6-1.exe](https://download.qt.io/archive/qt/4.8/4.8.6/qt-opensource-windows-x86-mingw482-4.8.6-1.exe)
+
+Make sure to install it to a path without spaces, such as:
+
+```
+E:/Qt/4.8.6
+```
+
+---
+
+### 3. Build the Project
+
+Open **Qt 4.8.6 Command Prompt**, then navigate to the project folder:
+
+```sh
+cd E:\PrintHtml-master\PrintHtml-master
+```
+
+Run the following commands:
+
+```sh
+qmake
+mingw32-make release
+```
+
+After a successful build, the executable will be found in the `release` directory.
+
+
+## 🔽 Precompiled Version (Download and run directly)
+
+If you just want to use the tool without modifying or compiling the source code:
+
+📦 A precompiled executable is available in:
+
+```
+release\release.zip
+```
+
+Simply extract it and run `PrintHtml.exe` as needed — no setup or installation required.
+
+---
+
+
 
 Since it has to spawn up an entire instance of the QtWebKit control in order to perform the printing
 the program is written to accept multiple URL's on the command line, one after the other. So if you have
 large batches of URL's to print, like we do simply pass them all on the command line. In our case we
 print our pick sheets using this tool by passing in batches of 20 URL's at a time and it works very fast
 without anything showing on the screen.
-
-# Build environment
-
-To build this you need to use a version of Qt that includes the QtWebKit control. This control was deprecated
-and removed from the Qt 5.x releases, and although there is an external project that has ported the QtWebKit
-control to the latest Qt releases, I was unable to find any pre-compiled libraries I could use out of the box
-for this project. Hence for simplicity I decided to stick to using Qt 4.8 and as of today the code is written
-to compile and link with Qt 4.8.6 using the Qt Creator that came with the Qt 5.7.1 release by installing
-Qt 4.8.6 alongside it. The build in the deploy directory is built using MingW 5.3 as a 32-bit x86 application.
-
-Theoretically the code is 100% portable so you could build it for Mac or Linux, but I have only done it on
-Windows since that is what I needed it for :)
-
-# Pre-built binaries
-
-For those who just want the resulting app and do not want to compile the code yourselves, I have included a
-pre-built Windows x86 version of the program in the deploy directory.
 
 # Caveats
 
@@ -62,10 +134,30 @@ been quite a few discussion about this that I could find on the web, but no solu
 If anyone has ideas about how to fix this it would be great to add some options to control the headers
 and footers to this program.
 
-# Potential improvements
+# REST server mode
 
-Something that would cool to add, but I am not familar enough with Qt and C++ these days to implement, would be
-to turn this application into a small REST server that would sit in the background and accept URL's and related
-options to print them over the wire so it would be easy to use from other apps without having to resort to
-executing it on the command line. If someone more familiar with Qt and REST services knows how to build a basic
-REST server into the app that would be a pretty slick improvement.
+PrintHtml can also run as a lightweight REST service. Start the application with
+`-server [port]` (default `8080`) and it will listen for HTTP requests. Send a
+`GET /print` request using query parameters that match the command line options
+in their short forms (`p`, `l`, `t`, `r`, `b`, `o`, `a`). The server accepts 
+either style of parameter and always returns a JSON response. Custom paper 
+sizes can be provided using `width` and `height` query parameters or the 
+shorthand `a=WIDTH,HEIGHT`.
+
+
+<h4>🧾 REST Parameters</h4>
+
+Parameter | Description
+-- | --
+url | Page URL to print (required)
+p | Printer name
+a | Paper size (e.g., A4, Letter, or custom WIDTH,HEIGHT in mm)
+l, t, r, b | Margins (in inches, optional)
+o | Orientation (Portrait or Landscape)
+pagefrom, pageto | Print range
+
+
+<h4>🧪 Example (REST + Custom Size)</h4>
+<pre><code class="language-http">http://localhost:9090/print?url=https://example.com&amp;p=Default&amp;a=77,77&amp;l=0&amp;t=0&amp;r=0&amp;b=0
+</code></pre>
+<hr>

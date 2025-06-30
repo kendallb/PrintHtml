@@ -26,6 +26,9 @@
 #ifndef PRINTHTML_H
 #define PRINTHTML_H
 
+#include <QTcpServer>
+#include <QTcpSocket>
+
 #include <QObject>
 #include <QCoreApplication>
 
@@ -36,11 +39,19 @@ private:
     QCoreApplication *app;
 
 public:
-    PrintHtml(bool testMode, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin, double rightMargin, double bottomMargin, QString paper, QString orientation);
+    PrintHtml(bool testMode, bool json, QStringList urls, QString selectedPrinter, double leftMargin, double topMargin,
+          double rightMargin, double bottomMargin, QString paper, QString orientation, int pageFrom, int pageTo,
+          double paperWidth = 0, double paperHeight = 0, bool exitOnCompletion = true, QTcpSocket *client =0, QByteArray resp="");
     void quit();
 
 private:
     bool loadNextUrl();
+    QStringList error;
+    QString succeeded;
+    QString failed;
+    double paperWidth;
+    double paperHeight;
+    QString paperSizeName;
 
 signals:
     void finished();
@@ -53,12 +64,17 @@ private slots:
     void htmlLoaded(bool ok);
 
 private:
+    QTcpSocket      *client;
+    QByteArray      resp;
     bool            testMode;   // True if we are running in test mode
+    bool            json;       // True if we want the JSON stdout
     QStringList     urls;       // List of url to print
     QPrinter        *printer;   // Printer object that we print to
     QWebPage        *webPage;   // QWebPage class for printing
     QString         url;
     QStringList     printed;
+    bool            exitOnCompletion; // Whether to exit the app when done
 };
 
 #endif // PRINTHTML_H
+  
